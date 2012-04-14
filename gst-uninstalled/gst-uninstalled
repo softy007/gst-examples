@@ -1,0 +1,63 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+  echo "Usage: gst-uninstalled branch"
+  echo "Example: gst-uninstalled 0.10"
+  exit 1
+fi
+
+BRANCH=$1
+MODULES="gstreamer gst-plugins-base gst-plugins-good"
+
+UNINSTALLED_ROOT=~/gst
+
+mkdir -p $UNINSTALLED_ROOT
+mkdir -p $UNINSTALLED_ROOT/$BRANCH
+mkdir -p $UNINSTALLED_ROOT/$BRANCH/prefix
+
+cd $UNINSTALLED_ROOT/$BRANCH
+
+for m in $MODULES
+do
+if [ $BRANCH = "master" ]; then
+  git clone git://anongit.freedesktop.org/gstreamer/$m
+else
+  git clone git://anongit.freedesktop.org/gstreamer/$m
+  cd $m
+  git checkout -b $BRANCH origin/$BRANCH
+  cd ..
+fi
+done
+
+ln -s gstreamer/scripts/git-update.sh git-update
+chmod +x git-update
+
+cd $UNINSTALLED_ROOT
+ln -s $BRANCH/gstreamer/scripts/gst-uninstalled gst-$BRANCH
+chmod +x gst-$BRANCH
+
+# build glib
+#
+git clone git://git.gnome.org/glib
+
+cd $UNINSTALLED_ROOT/glib
+
+./autogen.sh --prefix=$UNINSTALLED_ROOT/$BRANCH/prefix
+make
+make install
+
+# build pango
+#
+git clone git://git.gnome.org/pango
+
+cd $UNINSTALLED_ROOT/pango
+
+./autogen.sh --prefix=$UNINSTALLED_ROOT/$BRANCH/prefix
+make
+make install
+
+echo "Now compile all GStreamer modules:"
+echo "	cd $UNINSTALLED_ROOT; ./gst-$BRANCH"
+echo "	./git-update"
+
+exit 0
