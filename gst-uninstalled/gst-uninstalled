@@ -38,8 +38,9 @@ chmod +x gst-$BRANCH
 
 # build glib
 #
-git clone git://git.gnome.org/glib
+cd $UNINSTALLED_ROOT
 
+git clone git://git.gnome.org/glib
 cd $UNINSTALLED_ROOT/glib
 
 ./autogen.sh --prefix=$UNINSTALLED_ROOT/$BRANCH/prefix
@@ -48,8 +49,9 @@ make install
 
 # build pango
 #
-git clone git://git.gnome.org/pango
+cd $UNINSTALLED_ROOT
 
+git clone git://git.gnome.org/pango
 cd $UNINSTALLED_ROOT/pango
 
 ./autogen.sh --prefix=$UNINSTALLED_ROOT/$BRANCH/prefix
