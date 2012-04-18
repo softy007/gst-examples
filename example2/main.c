@@ -21,7 +21,7 @@ typedef struct {
 	unsigned long sampleRate; // Sample rate
 	unsigned long byteRate; // Average bytes per second
 	unsigned short blockAlign; // Block align
-	unsigned short bitsRate; // Significant bits per sample
+	unsigned short bitsPerSample; // Significant bits per sample
 	// Data Chunk - "data"
 	char subchunk2Id[4]; // Chunk Id - 4 byte "data" (0x64617461)
 	unsigned long subchunk2DataSize; // Chunk Data Size - 4 byte
@@ -44,8 +44,15 @@ int main(int argc, char **argv)
 	fclose(fname);
 	
 	printf("%.4s-%.4s\n", wave.chunkId, wave.format);
-	printf("Channels: %hi\n", wave.numChannels);
-	printf("Sample Rate: %li Hz\n", wave.sampleRate);
-
+	if (wave.numChannels == 1) {
+		printf("Channels\t\t: %hi - Mono\n", wave.numChannels);
+	} else if (wave.numChannels == 2) {
+		printf("Channels\t\t: %hi - Stereo\n", wave.numChannels);
+	} else {
+		printf("Channels\t\t: %hi\n", wave.numChannels);
+	}	
+	printf("Sample rate\t\t: %li Hz\n", wave.sampleRate);
+	printf("Byte rate\t\t: %li\n", wave.byteRate);
+	printf("Bits per sample\t\t: %hi bits\n", wave.bitsPerSample);	
 	return 0;
 }
